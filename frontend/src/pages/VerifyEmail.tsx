@@ -11,6 +11,26 @@ export default function VerifyEmail() {
     const navigate = useNavigate();
     const token = searchParams.get("token") || "";
 
+    if (!token) {
+        return (
+            <div className="min-h-screen bg-[#121212] flex items-center justify-center px-4">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="w-full max-w-md bg-[#181818] p-8 rounded-xl shadow-lg"
+                >
+                    <h1 className="text-white text-2xl font-semibold text-center mb-6">
+                        Invalid Verification Link
+                    </h1>
+                    <div className="text-gray-400 text-center">
+                        The verification link is missing a token. Please check your email for the correct link.
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
+
     useEffect(() => {
         if (!verified && !error) return;
 
