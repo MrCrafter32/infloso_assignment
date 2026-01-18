@@ -11,6 +11,87 @@ Full‑stack authentication project with email verification and password reset f
 - Protected routes in the UI
 - Basic rate limiting on auth endpoints
 
+## Implemented Features Checklist
+
+### Backend Setup
+- Node.js project initialized with npm
+- Express server structure and routing
+- Environment variables configured
+- Database connection via Prisma (MongoDB)
+- Required dependencies installed (Express, JWT, bcrypt, Prisma)
+
+### Database Design
+- User schema with username, email, password
+- Optional fields (`name`, `profilePicture`)
+- Unique constraints for username and email
+
+### API Development - POST /signup
+- Signup route handler
+- Input validation (username/email format, password strength)
+- Unique username/email checks
+- Password hashing (bcrypt)
+- Store user data in DB
+- Generate JWT for email verification
+- Informative success/error responses
+
+### API Development - POST /login
+- Login route handler
+- Input validation (username/email + password)
+- DB lookup by username/email
+- Password comparison (bcrypt)
+- JWT generation on success
+- Error messages for failed authentication
+
+### JWT Implementation
+- JWT secret configured in env
+- JWT generation with expiration
+- JWT validation middleware for protected routes
+
+### Security Measures
+- Input sanitization (validator)
+- CORS enabled
+- Rate limiting to prevent brute-force
+
+### Frontend Setup - React
+- Vite + React + TypeScript initialized
+- Tailwind CSS configured
+- React Router setup
+- React Hook Form + Zod validation
+- API client configured
+
+### Login Screen
+- Username/email + password fields
+- Validation + error display
+- Remember me checkbox (storage)
+- Password visibility toggle
+- Forgot password link
+- Login API call and token storage
+- Redirect after login
+- MelodyVerse styling
+
+### Signup Screen
+- Input fields and validation (including confirm password)
+- Terms and conditions checkbox
+- Error/success messages
+- Signup API call
+- Redirect after signup
+- Password strength UI indicator
+- MelodyVerse styling
+
+### Responsive UI
+- Responsive layout with Tailwind
+
+### Bonus Features
+- Password reset flow
+- Email verification flow
+- API unit tests
+- Framer Motion animations
+- Auth middleware for protected routes
+
+### Documentation & Testing
+- README setup instructions
+- API documentation in [API.MD](API.MD)
+
 ## Tech Stack
 
 **Backend:** Node.js, Express, Prisma, MongoDB, JWT, Nodemailer, Zod
@@ -104,6 +185,8 @@ npm run dev
 ## API Endpoints
 
 Base URL: `http://localhost:3000/api/auth`
+
+Full API documentation: [API.MD](API.MD)
 
 | Method | Endpoint | Description |
 | --- | --- | --- |

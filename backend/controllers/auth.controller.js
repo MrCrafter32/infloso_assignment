@@ -3,33 +3,47 @@ const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 const jsonWebToken = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const nodemailer = require('nodemailer');
 const { sendToken } = require('../lib/sendToken');
 const { findUserbyEmail,findUserbyId, findUserbyUsername, findUser } = require('../lib/findUser');
-const {signupSchema} =  require('../lib/zodSchema');
+const { signupSchema } = require('../lib/zodSchema');
+const { sanitizeString, sanitizeEmail } = require('../lib/sanitize');
 dotenv.config();
 
 
 const signup = async (req, res) => {
     try {
-        const {email,username,firstName,lastName,password} = req.body;
+        const { email, username, firstName, lastName, password, name, profilePicture } = req.body;
+        const sanitizedEmail = sanitizeEmail(email);
+        const sanitizedUsername = sanitizeString(username);
+        const sanitizedFirstName = sanitizeString(firstName);
+        const sanitizedLastName = sanitizeString(lastName);
+        const sanitizedName = sanitizeString(name);
+        const sanitizedProfilePicture = sanitizeString(profilePicture);
         const hashedPassword = bcrypt.hashSync(password, 10);
 
-        const userByEmail = await findUserbyEmail(email);
+        const userByEmail = await findUserbyEmail(sanitizedEmail);
         if (userByEmail) {
             return res.status(400).json({ error: 'User already exists' });
         }
-        const userByUsername = await findUserbyUsername(username);
+        const userByUsername = await findUserbyUsername(sanitizedUsername);
         if (userByUsername) {
             return res.status(400).json({ error: 'Username already taken' });
         }
-        signupSchema.parse({email,username,firstName,lastName,password});
+        signupSchema.parse({
+            email: sanitizedEmail,
+            username: sanitizedUsername,
+            firstName: sanitizedFirstName,
+            lastName: sanitizedLastName,
+            password
+        });
         const createdUser = await prisma.user.create({
             data: {
-                email,
-                username,
-                firstName,
-                lastName,
+                email: sanitizedEmail,
+                username: sanitizedUsername,
+                firstName: sanitizedFirstName,
+                lastName: sanitizedLastName,
+                name: sanitizedName || null,
+                profilePicture: sanitizedProfilePicture || null,
                 password: hashedPassword
             }
         });
@@ -44,7 +58,8 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     const { search, password } = req.body;
-    findUser(search).then(user => {
+    const sanitizedSearch = sanitizeString(search);
+    findUser(sanitizedSearch).then(user => {
         if (!user) {
             return res.status(404).json({ error: 'User not found or Invalid Password' });
         }
@@ -96,7 +111,7 @@ const verifyEmail = async (req, res) => {
     });
 }
 const forgotPassword = async (req, res) => {
-    const email = req?.body?.email;
+    const email = sanitizeEmail(req?.body?.email);
     if (!email) {
         return res.status(400).json({ error: 'Email is required' });
     }
@@ -150,8 +165,9 @@ const resetPassword = async (req, res) => {
 }
 const resendVerificationEmail = async (req, res) => {
     const { email, type} = req.body;
+    const sanitizedEmail = sanitizeEmail(email);
     try {
-        const user = await findUserbyEmail(email);
+        const user = await findUserbyEmail(sanitizedEmail);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }

@@ -77,7 +77,7 @@ describe('Auth API', () => {
         username: 'alpha',
         firstName: 'A',
         lastName: 'B',
-        password: 'secret123'
+        password: 'Secret123!'
       });
 
     expect(response.status).toBe(201);
@@ -103,7 +103,7 @@ describe('Auth API', () => {
 
     const response = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'a@b.com', password: 'secret123' });
+      .send({ email: 'a@b.com', password: 'Secret123!' });
 
     expect(response.status).toBe(200);
     expect(response.body.token).toBe('jwt-token');

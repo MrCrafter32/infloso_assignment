@@ -19,6 +19,8 @@ model User {
   username    String   @unique
   firstName   String
   lastName    String
+  name        String?
+  profilePicture String?
   password    String
   isVerified  Boolean  @default(false)
 
